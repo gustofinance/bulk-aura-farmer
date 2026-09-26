@@ -33,7 +33,7 @@ A focused reference for developers and traders researching current BULK access-c
 For developers evaluating BULK, the best path is:
 
 1. Read the [BULK developer documentation](https://docs.bulk.trade).
-2. Join through the disclosed [Gusto Finance YETI referral](https://app.bulk.trade/ref/YETI) if you want to use our referral path.
+2. [Join BULK](https://app.bulk.trade/ref/YETI) if you want to use our referral path; the link is disclosed below.
 3. Run [BULK Aura Farmer](https://github.com/gustofinance/bulk-aura-farmer) on testnet and dry-run first.
 4. Inspect fills, fees, funding, slippage, open interest, and position state before using real collateral.
 5. Check the latest [access-code research](https://github.com/gustofinance/bulk-exchange-access-codes-2026) and official BULK sources for changes.
