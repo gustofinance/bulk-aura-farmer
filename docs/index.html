@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A small, transparent BULK volume bot POC for maker-first execution, taker fallback, open interest experiments, and developer-built AURA research." />
+    <meta name="theme-color" content="#07100d" />
+    <link rel="canonical" href="https://gustofinance.github.io/bulk-aura-farmer/" />
+    <meta property="og:title" content="BULK Aura Farmer — a maker-first trading bot POC" />
+    <meta property="og:description" content="Learn how this Node.js POC reads the BULK book, tries ALO maker liquidity first, falls back to a taker, and exits with protection." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gustofinance.github.io/bulk-aura-farmer/" />
+    <title>BULK Aura Farmer | Maker-first volume bot POC</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07100d;
+        --surface: #0d1a15;
+        --surface-2: #11231b;
+        --line: #294136;
+        --text: #e4f1e8;
+        --muted: #9ab0a1;
+        --acid: #a9f36f;
+        --cyan: #76e4d1;
+        --warning: #ffd98b;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+      a { color: var(--acid); }
+      a:hover { color: #d2ffad; }
+      a:focus-visible, summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
+      .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+      .topbar { border-bottom: 1px solid var(--line); }
+      .topbar-inner { display: flex; justify-content: space-between; gap: 20px; padding: 18px 0; align-items: center; }
+      .mark { color: var(--acid); font-weight: 800; letter-spacing: .04em; }
+      nav { display: flex; gap: 18px; flex-wrap: wrap; }
+      nav a { color: var(--muted); text-decoration: none; font-size: 13px; }
+      nav a:hover { color: var(--text); }
+      .hero { padding: 92px 0 76px; display: grid; grid-template-columns: 1.25fr .75fr; gap: 64px; align-items: end; }
+      .eyebrow { color: var(--cyan); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+      h1, h2, h3 { line-height: 1.1; letter-spacing: -.04em; }
+      h1 { max-width: 760px; margin: 18px 0; font: 700 clamp(42px, 7vw, 84px)/.98 Georgia, Cambria, serif; }
+      h2 { margin: 0 0 16px; font: 700 clamp(28px, 4vw, 44px)/1.05 Georgia, Cambria, serif; }
+      h3 { margin: 0 0 8px; font-size: 17px; color: var(--acid); }
+      .lede { max-width: 700px; margin: 0 0 28px; color: var(--muted); font-size: 18px; }
+      .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+      .button { display: inline-block; padding: 12px 16px; border: 1px solid var(--acid); color: var(--bg); background: var(--acid); text-decoration: none; font-weight: 800; }
+      .button.secondary { color: var(--text); background: transparent; border-color: var(--line); }
+      .terminal { border: 1px solid var(--line); background: var(--surface); padding: 22px; box-shadow: 10px 10px 0 #0a1711; }
+      .terminal-head { color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px; }
+      .terminal p { margin: 8px 0; }
+      .green { color: var(--acid); }
+      .cyan { color: var(--cyan); }
+      section { border-top: 1px solid var(--line); padding: 72px 0; }
+      .section-intro { max-width: 680px; color: var(--muted); }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 28px; }
+      .card { border: 1px solid var(--line); background: var(--surface); padding: 22px; }
+      .card p, li { color: var(--muted); }
+      .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 30px; }
+      .step { border-top: 3px solid var(--cyan); background: var(--surface-2); padding: 16px; }
+      .step b { display: block; color: var(--cyan); margin-bottom: 8px; }
+      .disclosure { color: var(--warning); border-left: 3px solid var(--warning); padding-left: 16px; }
+      details { border-top: 1px solid var(--line); padding: 16px 0; }
+      summary { cursor: pointer; color: var(--text); font-weight: 700; }
+      footer { padding: 30px 0 52px; color: var(--muted); font-size: 13px; }
+      @media (max-width: 800px) {
+        .hero { grid-template-columns: 1fr; gap: 34px; padding-top: 58px; }
+        .grid, .flow { grid-template-columns: 1fr; }
+        .wrap { width: min(100% - 28px, 680px); }
+      }
+      @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": "BULK Aura Farmer",
+        "description": "A maker-first BULK trading volume and open interest experiment for developers.",
+        "codeRepository": "https://github.com/gustofinance/bulk-aura-farmer",
+        "programmingLanguage": "TypeScript",
+        "license": "https://opensource.org/licenses/MIT",
+        "isPartOf": { "@type": "WebSite", "name": "Gusto Finance" }
+      }
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <a class="mark" href="./">BULK / AURA FARMER</a>
+        <nav aria-label="Primary navigation">
+          <a href="#how">How it works</a>
+          <a href="#start">Start</a>
+          <a href="https://github.com/gustofinance/bulk-aura-farmer">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap hero">
+        <div>
+          <div class="eyebrow">Open-source TypeScript POC · BULK Exchange</div>
+          <h1>A small bot for learning the BULK execution loop.</h1>
+          <p class="lede">Try maker liquidity first. Use a taker only for the remainder. Protect the position. Inspect every assumption. This is a developer tool for experimenting with volume and open interest—not a promise of AURA, profit, or an airdrop.</p>
+          <div class="actions">
+            <a class="button" href="https://app.bulk.trade/ref/YETI">Join BULK with YETI</a>
+            <a class="button secondary" href="https://github.com/gustofinance/bulk-aura-farmer">View source</a>
+          </div>
+        </div>
+        <div class="terminal" aria-label="Bot execution summary">
+          <div class="terminal-head">$ bulk-aura-farmer / loop</div>
+          <p><span class="green">01</span> read L2 top bid</p>
+          <p><span class="green">02</span> submit ALO maker entry</p>
+          <p><span class="green">03</span> cancel remainder</p>
+          <p><span class="green">04</span> taker fallback, if needed</p>
+          <p><span class="green">05</span> range TP / stop exit</p>
+          <p><span class="cyan">safe default:</span> testnet + dry run</p>
+        </div>
+      </div>
+
+      <section id="how">
+        <div class="wrap">
+          <h2>Useful because it is inspectable.</h2>
+          <p class="section-intro">The bot keeps the moving parts visible: public market data, local signing, a single account, explicit fee assumptions, and a bounded position lifecycle. Fork it when you want a starting point for a market-data tool, volume experiment, or maker strategy.</p>
+          <div class="flow">
+            <div class="step"><b>01 / Book</b>Read the selected market's top bid.</div>
+            <div class="step"><b>02 / Maker</b>Place ALO at the bid and wait.</div>
+            <div class="step"><b>03 / Taker</b>Cross only for unfilled size.</div>
+            <div class="step"><b>04 / Protect</b>Set range/OCO exit thresholds.</div>
+            <div class="step"><b>05 / Flatten</b>Close on exit or max hold.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="wrap">
+          <h2>Start on testnet.</h2>
+          <p class="section-intro">Use a dedicated trading account. The default configuration does not submit orders. Once you understand the account, market rules, fees, and collateral requirements, you can enable live testnet execution with a small size.</p>
+          <div class="grid">
+            <article class="card"><h3>1. Create access</h3><p><a href="https://app.bulk.trade/ref/YETI">Open BULK with the disclosed YETI referral</a>, complete the current onboarding requirements, and fund a dedicated account only as appropriate for your test.</p></article>
+            <article class="card"><h3>2. Run the POC</h3><p>Clone the repo, copy <code>.env.example</code>, set your private key locally, keep <code>NETWORK=testnet</code>, and begin with <code>DRY_RUN=true</code>.</p></article>
+            <article class="card"><h3>3. Measure reality</h3><p>Compare fills, fees, funding, slippage, realized PnL, position time, and the current AURA rules. Never infer reward eligibility from volume alone.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>AURA, volume, and open interest.</h2>
+          <p class="section-intro">BULK controls its reward program and can change eligibility, snapshots, multipliers, and distribution. This project explains a way to create genuine account activity; it cannot read, claim, or guarantee AURA.</p>
+          <p class="disclosure">Referral disclosure: the YETI links on this page are referral links for this project. No AURA, airdrop, return, or eligibility outcome is guaranteed.</p>
+          <div class="grid">
+            <article class="card"><h3>Executed volume</h3><p>Only filled orders create executed notional. Resting orders and rejected ALO orders are not the same as volume.</p></article>
+            <article class="card"><h3>Open interest</h3><p>A position can affect open interest while it is open. The bot exits or refuses a new round when the selected account is not flat.</p></article>
+            <article class="card"><h3>Costs matter</h3><p>Maker/taker fees, funding, spread, market impact, and liquidation risk can overwhelm a points thesis. Re-check BULK's live fee state.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <h2>Developer FAQ</h2>
+          <details><summary>Is this an official BULK bot?</summary><p>No. It is an independent open-source TypeScript example using BULK's public APIs and signing library.</p></details>
+          <details><summary>Does it guarantee AURA or an airdrop?</summary><p>No. The official BULK app and documentation control current program rules. Treat all reward outcomes as unknown until confirmed by BULK.</p></details>
+          <details><summary>Can I use mainnet?</summary><p>The code supports mainnet, but testnet and dry-run are the defaults. Mainnet requires an explicit confirmation environment variable and a dedicated account.</p></details>
+          <details><summary>Where do I extend it?</summary><p>Start with WebSocket account streams, exchange-info precision checks, PnL/fill accounting, circuit breakers, short mode, and inventory-aware quoting.</p></details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <p><a href="https://github.com/gustofinance/bulk-aura-farmer">Source on GitHub</a> · <a href="https://docs.bulk.trade">BULK docs</a> · <a href="https://app.bulk.trade/ref/YETI">BULK signup</a></p>
+      <p>Trading leveraged perpetuals involves risk. Read the <a href="https://github.com/gustofinance/bulk-aura-farmer/blob/main/README.md">full README and disclaimer</a> before running anything.</p>
+    </footer>
+  </body>
+</html>

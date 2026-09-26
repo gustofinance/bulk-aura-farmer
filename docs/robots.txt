@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gustofinance.github.io/bulk-aura-farmer/sitemap.xml

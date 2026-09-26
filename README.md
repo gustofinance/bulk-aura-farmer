@@ -2,6 +2,8 @@
 
 An intentionally small, open-source **BULK volume bot** and trading automation POC for builders experimenting with **BULK Aura farming, DeFi airdrop farming, open interest, maker liquidity, and perpetuals volume** in 2026.
 
+**[Open the developer landing page](https://gustofinance.github.io/bulk-aura-farmer/)** · **[Join BULK with the YETI referral](https://app.bulk.trade/ref/YETI)** · **[Read the source](https://github.com/gustofinance/bulk-aura-farmer)**
+
 It is an independent community project. It is not an official BULK product, does not promise AURA, and is not financial advice. Trading perpetuals can lose your collateral.
 
 ## Quick answer
