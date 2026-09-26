@@ -41,7 +41,9 @@ The referral link is disclosed because it supports this project:
 
 ## How to earn AURA on BULK
 
-The honest answer is that BULK controls the AURA rules and can change them. Use the official [Aura documentation](https://docs.bulk.trade/bulk-exchange/points) and the app's points/referrals pages as the current source of truth; do not assume that a particular amount of volume guarantees a points allocation, an airdrop, or future token value.
+The current program includes **Ranked Aura** from trading activity. Ranked Aura sets your position in BULK's seasonal **Challenger Series** ladder, where ranks can move weekly through promotion and demotion. AURA earned through pre-deposits or BulkSOL activity is unaffected, but does not count toward Challenger Series rank. Use the official [Aura documentation](https://docs.bulk.trade/bulk-exchange/points) and the [BULK Aura page](https://app.bulk.trade/aura) for live season rules.
+
+Trading activity can affect rank, but no amount of volume guarantees a rank, reward, prize, playoff place, airdrop, or profit. Track actual fills, fees, funding, slippage, open interest, and rank movement rather than treating submitted orders as completed activity.
 
 The practical activity path for a user is:
 
@@ -51,7 +53,7 @@ The practical activity path for a user is:
 4. Generate genuine account activity while tracking fees, funding, slippage, liquidation risk, and the current AURA rules.
 5. Review the official app and docs for eligibility, snapshots, multipliers, referral attribution, and claim instructions.
 
-BULK's current referral documentation says referrer rewards are distributed from a dedicated weekly AURA pool. It also describes access codes for invite-only mainnet and says new users can unlock additional access codes through mainnet trading volume. Those are program rules, not a promise that this bot earns AURA for every user.
+BULK's current referral documentation says referrer rewards are distributed from a dedicated weekly AURA pool. It also describes access codes for invite-only mainnet and says new users can unlock additional access codes through mainnet trading volume. Those are program rules, not a promise that this bot earns AURA or Challenger Series rank for every user.
 
 ### What this bot measures and what it does not
 
